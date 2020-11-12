@@ -1,17 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+  <Navbar />
+  <router-view></router-view>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { provide } from "vue";
+import { DefaultApolloClient } from "@vue/apollo-composable";
 
+import { client } from "../ApolloClient";
+import Navbar from "./components/Navbar.vue";
 export default {
-  name: 'App',
+  name: "App",
+  setup() {
+    provide(DefaultApolloClient, client);
+  },
   components: {
-    HelloWorld
-  }
-}
+    Navbar,
+  },
+};
 </script>
 
 <style>
@@ -21,6 +28,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+body {
+  margin: 0;
+  padding: 0;
 }
 </style>
