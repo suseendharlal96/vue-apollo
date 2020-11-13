@@ -7,12 +7,17 @@
     <div class="btn-container">
       <template v-if="authData">
         <template
-          v-if="userId && userId.toString() === singleProduct.creator.toString()"
+          v-if="
+            userId && userId.toString() === singleProduct.creator.toString()
+          "
         >
           <button
             class="delete"
             @click="
-              $emit('delproduct', { id: singleProduct._id, name: singleProduct.name })
+              $emit('delproduct', {
+                id: singleProduct._id,
+                name: singleProduct.name,
+              })
             "
           >
             Delete
@@ -21,7 +26,10 @@
             Edit
           </button>
         </template>
-        <button class="cart" @click="$emit('addcart', { singleProduct })">
+        <button
+          class="cart"
+          @click="$emit('addcart', { id: singleProduct._id })"
+        >
           Add to cart
         </button>
       </template>
@@ -34,13 +42,14 @@ import { ref, computed } from "vue";
 import { useStore } from "vuex";
 export default {
   props: ["product"],
-  // emits: ["delproduct", "editproduct", "addcart"],
+  emits: ["delproduct", "editproduct", "addcart"],
   setup(props) {
-    console.log(props);
     const store = useStore();
     let userId = ref(null);
     const authData = computed(() => store.getters["auth/getAuthData"]);
-    userId.value = authData.value ? authData.value && authData.value._id : null;
+    userId.value = authData.value ? authData.value && authData.value.id : null;
+    console.log(userId.value);
+    console.log(props.product);
     return {
       singleProduct: props.product,
       authData,

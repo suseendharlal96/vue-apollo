@@ -32,12 +32,12 @@ const mutations = {
   `,
 
   SIGN_UP: gql`
-    mutation signin(
+    mutation signup(
       $email: String!
       $password: String!
       $confirmPassword: String!
     ) {
-      signin(
+      signup(
         email: $email
         password: $password
         confirmPassword: $confirmPassword
@@ -46,6 +46,12 @@ const mutations = {
         token
         id
       }
+    }
+  `,
+
+  addToCart: gql`
+    mutation addToCart($prodId: ID!) {
+      addToCart(prodId: $prodId)
     }
   `,
 };

@@ -84,6 +84,7 @@ import mutations from "../graphql/mutations/index";
 export default {
   setup() {
     const paginationData = reactive({ page: 1, limit: 2 });
+    const cartItemId = ref("");
     const productData = ref("");
     const setPage = (page) => {
       paginationData.page = page;
@@ -93,6 +94,7 @@ export default {
       getProducts();
     });
 
+    // Fetching products
     const { mutate: getProducts, loading, onDone } = useMutation(
       mutations.GET_PRODUCTS,
       () => ({
@@ -108,6 +110,30 @@ export default {
       productData.value = res.data ? res.data.getProducts : null;
       console.log(productData.value);
     });
+
+    // Add to Cart
+
+    const addcart = (product) => {
+      console.log(product);
+      cartItemId.value = product.id;
+      addToCart();
+    };
+
+    const { mutate: addToCart, onDone: addedToCart } = useMutation(
+      mutations.addToCart,
+      () => ({
+        variables: {
+          prodId: cartItemId.value,
+        },
+      })
+    );
+
+    addedToCart((res) => {
+      console.log(res);
+      cartItemId.value = null;
+      alert('Added to your cart')
+    });
+
     onMounted(() => {
       getProducts();
     });
@@ -116,6 +142,7 @@ export default {
       productData,
       paginationData,
       setPage,
+      addcart,
     };
   },
   components: {
