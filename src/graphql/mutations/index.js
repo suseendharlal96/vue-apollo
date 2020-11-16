@@ -21,6 +21,50 @@ const mutations = {
     }
   `,
 
+  createProduct: gql`
+    mutation createProduct(
+      $name: String!
+      $price: Int!
+      $image: String!
+      $description: String!
+    ) {
+      addProduct(
+        name: $name
+        price: $price
+        image: $image
+        description: $description
+      ) {
+        _id
+      }
+    }
+  `,
+
+  updateProduct: gql`
+    mutation updateProduct(
+      $id: ID!
+      $name: String!
+      $price: Int!
+      $image: String!
+      $description: String!
+    ) {
+      updateProduct(
+        id: $id
+        name: $name
+        price: $price
+        image: $image
+        description: $description
+      ) {
+        name
+      }
+    }
+  `,
+
+  deleteProduct: gql`
+    mutation deleteProduct($id: ID!) {
+      deleteProduct(id: $id)
+    }
+  `,
+
   SIGN_IN: gql`
     mutation signin($email: String!, $password: String!) {
       signin(email: $email, password: $password) {
@@ -52,6 +96,33 @@ const mutations = {
   addToCart: gql`
     mutation addToCart($prodId: ID!) {
       addToCart(prodId: $prodId)
+    }
+  `,
+
+  removeFromCart: gql`
+    mutation removeFromCart($prodId: ID!) {
+      removeFromCart(prodId: $prodId)
+    }
+  `,
+  pay: gql`
+    mutation pay(
+      $id: ID!
+      $name: String!
+      $price: Int!
+      $image: String!
+      $description: String!
+      $quantity: Int!
+    ) {
+      pay(
+        product: {
+          id: $id
+          name: $name
+          price: $price
+          image: $image
+          description: $description
+          quantity: $quantity
+        }
+      )
     }
   `,
 };

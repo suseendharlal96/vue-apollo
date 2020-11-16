@@ -4,7 +4,11 @@
       <h3>Cart Total: ₹ {{ total }}</h3>
       <div class="cart-container">
         <template v-for="c in cart" :key="c._id">
-          <Cart :cart="c" @changetotal="changetotal" />
+          <Cart
+            :cart="c"
+            @changetotal="changetotal"
+            @remove-item="removeItem(c._id)"
+          />
         </template>
       </div>
     </template>
@@ -46,22 +50,26 @@ export default {
       tempCart[a] = { ...tempCart[a], quantity: data.quantity };
       cart.value = tempCart;
     };
+    const getCartItems = () => {
+      var { loading: fetching, onResult } = useQuery(queries.getCart, null, {
+        fetchPolicy: "cache-and-network",
+      });
+      loading.value = fetching.value;
+      onResult((res) => {
+        loading.value = res.loading;
+        cart.value = res && res.data.getCart.products;
+      });
+    };
+    const removeItem = (id) => {
+      console.log(1);
+      console.log(id);
+      cart.value = cart.value.filter((c) => c._id !== id);
+    };  
     onMounted(() => {
       if (!authData.value) {
         router.push("/");
       } else {
-        const { loading: fetching, onResult } = useQuery(
-          queries.getCart,
-          null,
-          {
-            fetchPolicy: "cache-and-network",
-          }
-        );
-        loading.value = fetching.value;
-        onResult((res) => {
-          loading.value = res.loading;
-          cart.value = res && res.data.getCart.products;
-        });
+        getCartItems();
       }
     });
     return {
@@ -69,6 +77,8 @@ export default {
       loading,
       total,
       changetotal,
+      getCartItems,
+      removeItem,
     };
   },
   components: {

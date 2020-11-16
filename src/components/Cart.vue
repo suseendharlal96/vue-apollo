@@ -25,8 +25,24 @@
           <button @click="changeQuantity('increase')">+</button>
         </span>
       </div>
-      <button class="remove" @click="removeCart(mycart._id)">Remove</button>
-      <button class="pay" @click="makepayment(mycart)">Pay</button>
+      <button class="remove" @click="removeItem({ prodId: mycart._id })">
+        Remove
+      </button>
+      <button
+        class="pay"
+        @click="
+          makepayment({
+            id: mycart._id,
+            name: mycart.name,
+            price: mycart.price,
+            image: mycart.image,
+            description: mycart.description,
+            quantity: mycart.quantity,
+          })
+        "
+      >
+        {{ paying ? "Processing payment" : "Pay " }}
+      </button>
     </div>
   </div>
 </template>
@@ -34,9 +50,13 @@
 <script>
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import { useMutation } from "@vue/apollo-composable";
+
+import mutations from "../graphql/mutations/index";
+
 export default {
   props: ["cart"],
-  emits: ["changetotal"],
+  emits: ["changetotal", "remove-item"],
   setup(props, { emit }) {
     const actualCart = ref();
     const store = useStore();
@@ -53,21 +73,32 @@ export default {
       actualCart.value.price = props.cart.price * actualCart.value.quantity;
     };
     const authData = computed(() => store.getters["auth/getAuthData"]);
-    const removeCart = (productId) => {
-      store.dispatch("cart/removeCartItem", {
-        productId,
-        token: authData.value.token,
-      });
-    };
-    const makepayment = (cart) => {
-      store.dispatch("cart/makepayment", { cart, token: authData.value.token });
-    };
+
+    // remove cart mutation
+    const { mutate: removeItem, onDone } = useMutation(
+      mutations.removeFromCart
+    );
+    onDone(() => {
+      alert("Item removed");
+      emit("remove-item");
+    });
+
+    const {
+      mutate: makepayment,
+      loading: paying,
+      onDone: paymentSuccess,
+    } = useMutation(mutations.pay);
+    paymentSuccess(() => {
+      alert("Payment successfull");
+      emit("remove-item");
+    });
     return {
       mycart: actualCart,
       changeQuantity,
-      removeCart,
+      paying,
       makepayment,
       authData,
+      removeItem,
     };
   },
 };

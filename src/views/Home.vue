@@ -1,4 +1,7 @@
 <template>
+  <div v-if="authData">
+    <button data-tooltip="create product" @click="createProduct">+</button>
+  </div>
   <div
     v-if="productData && productData.paginationInfo"
     class="pagination-container"
@@ -46,7 +49,7 @@
           <Product
             :product="product"
             @delproduct="delproduct($event)"
-            @editproduct="editproduct($event)"
+            @editproduct="updateProduct($event)"
             @addcart="addcart($event)"
           />
         </template>
@@ -64,28 +67,38 @@
       </div>
     </template>
   </div>
-  <!-- <template v-if="isModalOpen">
-    <product-form
+  <template v-if="isModalOpen">
+    <Productform
       @cancel="cancel"
       :delId="delId"
+      @success="success"
       :prodName="prodName"
       :editProduct="editProduct"
     />
-  </template> -->
+  </template>
 </template>
 
 <script>
 import { useMutation } from "@vue/apollo-composable";
 
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 import Product from "../components/Product.vue";
+import Productform from "../components/Productform.vue";
 import mutations from "../graphql/mutations/index";
 export default {
   setup() {
+    const store = useStore();
+    const router = useRouter();
     const paginationData = reactive({ page: 1, limit: 2 });
     const cartItemId = ref("");
     const productData = ref("");
+    const delId = ref("");
+    const prodName = ref("");
+    const editProduct = ref("");
+    const isModalOpen = ref(false);
     const setPage = (page) => {
       paginationData.page = page;
     };
@@ -93,7 +106,34 @@ export default {
       console.log(1);
       getProducts();
     });
-
+    const authData = computed(() => store.getters["auth/getAuthData"]);
+    const createProduct = () => {
+      router.push("/create-product");
+      isModalOpen.value = true;
+    };
+    const delproduct = ({ id, name }) => {
+      console.log({ name, id });
+      delId.value = id;
+      prodName.value = name;
+      router.push(`/delete-product/${id}`);
+      isModalOpen.value = true;
+    };
+    const updateProduct = ({ singleProduct }) => {
+      router.push(`/edit-product/${singleProduct._id}`);
+      editProduct.value = singleProduct;
+      isModalOpen.value = true;
+    };
+    const success = () => {
+      getProducts();
+      cancel();
+    };
+    const cancel = () => {
+      isModalOpen.value = false;
+      delId.value = null;
+      prodName.value = null;
+      router.push("/");
+      editProduct.value = null;
+    };
     // Fetching products
     const { mutate: getProducts, loading, onDone } = useMutation(
       mutations.GET_PRODUCTS,
@@ -131,22 +171,34 @@ export default {
     addedToCart((res) => {
       console.log(res);
       cartItemId.value = null;
-      alert('Added to your cart')
+      alert("Added to your cart");
     });
 
     onMounted(() => {
+      router.push("/");
       getProducts();
     });
     return {
       loading,
       productData,
       paginationData,
+      authData,
       setPage,
       addcart,
+      createProduct,
+      delproduct,
+      updateProduct,
+      editProduct,
+      success,
+      delId,
+      prodName,
+      cancel,
+      isModalOpen,
     };
   },
   components: {
     Product,
+    Productform,
   },
 };
 </script>
