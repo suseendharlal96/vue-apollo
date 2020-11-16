@@ -103,7 +103,6 @@ export default {
       paginationData.page = page;
     };
     watch(paginationData, () => {
-      console.log(1);
       getProducts();
     });
     const authData = computed(() => store.getters["auth/getAuthData"]);
@@ -112,7 +111,6 @@ export default {
       isModalOpen.value = true;
     };
     const delproduct = ({ id, name }) => {
-      console.log({ name, id });
       delId.value = id;
       prodName.value = name;
       router.push(`/delete-product/${id}`);
@@ -146,15 +144,12 @@ export default {
     );
 
     onDone((res) => {
-      console.log(res);
       productData.value = res.data ? res.data.getProducts : null;
-      console.log(productData.value);
     });
 
     // Add to Cart
 
     const addcart = (product) => {
-      console.log(product);
       cartItemId.value = product.id;
       addToCart();
     };
@@ -169,7 +164,6 @@ export default {
     );
 
     addedToCart((res) => {
-      console.log(res);
       cartItemId.value = null;
       alert("Added to your cart");
     });

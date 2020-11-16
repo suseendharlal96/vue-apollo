@@ -42,11 +42,8 @@ export default {
       return t;
     });
     const changetotal = (data) => {
-      console.log(data);
-      console.log(cart.value);
       const tempCart = [...cart.value];
       const a = tempCart.findIndex((c) => c._id === data._id);
-      console.log(a);
       tempCart[a] = { ...tempCart[a], quantity: data.quantity };
       cart.value = tempCart;
     };
@@ -61,8 +58,6 @@ export default {
       });
     };
     const removeItem = (id) => {
-      console.log(1);
-      console.log(id);
       cart.value = cart.value.filter((c) => c._id !== id);
     };  
     onMounted(() => {

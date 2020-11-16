@@ -119,7 +119,6 @@ export default {
   props: ["delId", "prodName", "editProduct"],
   emits: ["cancel", "success"],
   setup(props, { emit }) {
-    console.log(props.delId);
     // const { editProduct } = props;
     const router = useRouter();
     const store = useStore();
@@ -154,13 +153,9 @@ export default {
     const submitForm = (e) => {
       e.preventDefault();
       errors = { name: "", price: null, image: "", description: "" };
-      console.log(form.value);
-      console.log(authData.value);
-      console.log(isValid.value);
       if (isValid.value) {
         props.editProduct ? editProduct() : addProduct();
       } else {
-        console.log(1);
         if (form.value.name === "") {
           errors.name = "Must not be empty";
         } else {
@@ -181,8 +176,6 @@ export default {
         } else {
           errors.description = "";
         }
-        console.log(errors);
-        console.log(form.value);
       }
     };
     const {
@@ -222,12 +215,9 @@ export default {
       onDone: deleteSuccess,
     } = useMutation(mutations.deleteProduct);
     deleteSuccess(() => {
-      console.log(1);
       emit("success");
     });
     onMounted(() => {
-      console.log(authData);
-      console.log(router);
       if (!authData.value) {
         router.push("/auth");
       }

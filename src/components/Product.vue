@@ -48,8 +48,6 @@ export default {
     let userId = ref(null);
     const authData = computed(() => store.getters["auth/getAuthData"]);
     userId.value = authData.value ? authData.value && authData.value.id : null;
-    console.log(userId.value);
-    console.log(props.product);
     return {
       singleProduct: props.product,
       authData,

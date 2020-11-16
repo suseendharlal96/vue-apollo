@@ -55,7 +55,6 @@ export default {
         loading.value = fetching.value;
         onResult((res) => {
           loading.value = res.loading;
-          console.log(res.data.getOrders);
           orders.value = res.data.getOrders.products;
         });
       }

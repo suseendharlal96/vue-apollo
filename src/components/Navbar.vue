@@ -67,7 +67,6 @@ export default {
       showLink.value = false;
     };
     const authData = computed(() => store.getters["auth/getAuthData"]);
-    console.log(authData.value);
     const currentRoute = computed(() => route.path);
     return {
       router,

@@ -102,11 +102,7 @@ export default {
     };
     const submitForm = (e) => {
       e.preventDefault();
-      // let url = "signin";
-      console.log(isSignup.value);
       isSignup.value ? signupData() : signinData();
-      // store.dispatch("auth/authenticate", { form, url });
-      console.log(form);
     };
     // signup mutation
     const {
@@ -122,8 +118,6 @@ export default {
       },
     }));
     signupDone((res) => {
-      console.log(1);
-      console.log(res);
       store.commit("auth/setAuthData", res.data.signup);
       router.push("/");
     });
@@ -145,13 +139,10 @@ export default {
       },
     }));
     signinDone((res) => {
-      console.log(1);
-      console.log(res);
       store.commit("auth/setAuthData", res.data.signin);
       router.push("/");
     });
     onError((error) => {
-      console.log({ name: error.name, stack: error.stack });
       errors.value = error.message;
     });
     const isInValid = computed(() => {
