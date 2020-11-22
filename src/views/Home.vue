@@ -163,7 +163,7 @@ export default {
       })
     );
 
-    addedToCart((res) => {
+    addedToCart(() => {
       cartItemId.value = null;
       alert("Added to your cart");
     });
