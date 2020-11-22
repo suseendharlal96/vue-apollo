@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { reactive, ref, computed, onMounted } from "vue";
+import { reactive, ref, computed, onMounted, watch } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
@@ -122,6 +122,7 @@ export default {
     // const { editProduct } = props;
     const router = useRouter();
     const store = useStore();
+    let editingProduct = reactive({});
     let form = ref({
       name: "",
       price: null,
@@ -134,9 +135,12 @@ export default {
       image: "",
       description: "",
     });
-    if (props.editProduct) {
-      form.value = props.editProduct;
-    }
+    watch(() => {
+      if (props.editProduct) {
+        form.value = props.editProduct;
+        editingProduct = props.editProduct;
+      }
+    });
     const authData = computed(() => store.getters["auth/getAuthData"]);
     const isValid = computed(() => {
       if (
@@ -154,7 +158,7 @@ export default {
       e.preventDefault();
       errors = { name: "", price: null, image: "", description: "" };
       if (isValid.value) {
-        props.editProduct ? editProduct() : addProduct();
+        editingProduct ? editProduct() : addProduct();
       } else {
         if (form.value.name === "") {
           errors.name = "Must not be empty";
@@ -184,7 +188,7 @@ export default {
       onDone: editDone,
     } = useMutation(mutations.updateProduct, () => ({
       variables: {
-        id: props.editProduct._id,
+        id: editingProduct._id,
         name: form.value.name,
         image: form.value.image,
         price: +form.value.price,

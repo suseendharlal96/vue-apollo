@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useMutation } from "@vue/apollo-composable";
 
@@ -60,9 +60,13 @@ export default {
   setup(props, { emit }) {
     const actualCart = ref();
     const store = useStore();
-    if (props.cart) {
-      actualCart.value = { ...props.cart };
-    }
+    watch(() => {
+      if (props.cart) {
+        actualCart.value = props.cart;
+      }
+    });
+    // props?.cart ? (actualCart.value = props?.cart) : null;
+
     const changeQuantity = (option) => {
       if (option === "increase") {
         actualCart.value.quantity++;
